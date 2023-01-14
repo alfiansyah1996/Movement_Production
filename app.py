@@ -161,6 +161,62 @@ if process:
 	join = join.loc[(join['minus_fg'] > 0)]
 	join.loc[(join['minus_fg'] <= 10), 'minus_fg_plus_buffer'] = (join['minus_fg']*buffer1).apply(np.ceil)
 	join.loc[(join['minus_fg'] > 10), 'minus_fg_plus_buffer'] = (join['minus_fg']*buffer2).apply(np.ceil)
+	
+	history = pd.read_excel('History.xlsx')
+	history = history.loc[(history['activity_type'] == "stock_movement")]
+	history = history.loc[(history['area_source'] == "Storage Chiller Fresh") | (history['area_source'] == "Storage Ambient WH07")
+			      |(history['area_source'] == "Production")|(history['area_source'] == "Finished Goods Storage")]
+	history = history.loc[(history['area_destination'] == "Production")|(history['area_destination'] == "Finished Goods Storage")]
+	history = history[['created_time','sku_number','sku_description','qty','area_source','area_destination']]
+	history = pd.DataFrame(history.groupby(['created_time','sku_number','sku_description','area_source','area_destination'], as_index = False).sum())
+	history = history.drop_duplicates(subset='sku_number', keep="last")
+	history = history.loc[(history['area_destination'] == "Production")]
+	history = pd.merge(
+		left=history,
+		right=base,
+		left_on='sku_number',
+		right_on='sku_number',
+		how='left')
+	history['varian_name'] = history['sku_description'].str.replace(r'\s*\w+(?:\W+\w+)?\s*(?![^,])', '')
+	history = history.replace({'varian_name': 'Impor Impor'}, 
+                        {'varian_name': 'Impor'}, regex=True)
+    	history = history.replace({'varian_name': 'Import'}, 
+                        {'varian_name': 'Impor'}, regex=True)
+	history = history.replace({'varian_name': 'Organik Organik'}, 
+				{'varian_name': 'Organik'}, regex=True)
+	history = history.replace({'varian_name': 'Imperfect Imperfect'}, 
+				{'varian_name': 'Imperfect'}, regex=True)
+	history = history.replace({'varian_name': 'Konvensional Konvensional'}, 
+				{'varian_name': 'Konvensional'}, regex=True)
+	history = history.replace({'varian_name': 'Conventional'}, 
+				{'varian_name': 'Konvensional'}, regex=True)
+	history = history.replace({'varian_name': 'Premium Premium'}, 
+				{'varian_name': 'Premium'}, regex=True)
+	history = history.replace({'varian_name': 'Hidroponik Hidroponik'}, 
+				{'varian_name': 'Hidroponik'}, regex=True)
+	history = history.replace({'varian_name': 'Dummy'}, 
+				{'varian_name': 'Konvensional'}, regex=True)
+	history = history.replace({'varian_name': ' B2B'}, 
+				{'varian_name': ''}, regex=True)
+	history = history.replace({'varian_name': ' Konvensional'}, 
+				{'varian_name': ''}, regex=True)
+	history.loc[(history['unit'] == 'gram'), 'unit'] = 'kg'
+
+	history['varian_name']=history['varian_name']+' '+history['unit']
+
+	history = history[['varian_name','qty']]
+
+	history.columns = ['varian_name','last_move_to_production']
+
+	history = history.drop_duplicates(subset='varian_name', keep="last")
+
+	join = pd.merge(
+        	left=join,
+        	right=history,
+        	left_on='varian_name',
+        	right_on='varian_name',
+        	how='left')
+	join = join.fillna(0)
 
 	st.markdown('Process Completed')
 	st.dataframe(join)
