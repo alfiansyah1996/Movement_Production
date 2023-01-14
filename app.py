@@ -29,33 +29,39 @@ st.markdown("""---""")
 
 st.write("2.Download EPC Same Day [link](https://pisang.sayurbox.tech/question/7220-epc-real-time-parent-ingredients-virtual-bundling?slot=slot-sameday&warehouse=JK01&inventory_system_category=Fruits&inventory_system_category=Vegetables&order_status=COMPLETED&order_status=CONFIRMED&order_status=CREATED&order_status=DELIVERED&order_status=PAID&order_status=SHIPPED), input delivery date yang dibutuhkan lalu upload")
 read_epcsd = st.file_uploader('Upload EPC Same Day', type='xlsx')
-if read_stock:
+if read_epcsd:
 	st.markdown('Upload EPC Same Day Success')
 st.markdown("""---""")
 
 st.write("3.Download EPC Next Day [link](https://pisang.sayurbox.tech/question/7220-epc-real-time-parent-ingredients-virtual-bundling?slot=slot-0&slot=slot-1&slot=slot-12&warehouse=JK01&inventory_system_category=Fruits&inventory_system_category=Vegetables&order_status=COMPLETED&order_status=CONFIRMED&order_status=CREATED&order_status=DELIVERED&order_status=PAID&order_status=SHIPPED), input delivery date yang dibutuhkan lalu upload")
 read_epcnd = st.file_uploader('Upload EPC Next Day', type='xlsx')
-if read_stock:
+if read_epcnd:
 	st.markdown('Upload EPC Next Day Success')
 st.markdown("""---""")
 
 st.write("4.Download Parent Child Relationships [link](https://pisang.sayurbox.tech/question/2125-sku-parent-child-relationship-list), langsung tanpa input filter")
 pcr = st.file_uploader('Upload Parent Child Relationships', type='xlsx')
-if read_stock:
-	st.markdown('Upload Parent Child Relationships')
+if pcr:
+	st.markdown('Upload Parent Child Relationships Success')
 st.markdown("""---""")
 
 st.write("5.Download SKU Master [link](https://pisang.sayurbox.tech/question/5853-sku-master), langsung tanpa input filter")
 sku_master = st.file_uploader('Upload SKU Master', type='xlsx')
-if read_stock:
-	st.markdown('Upload SKU Master')
+if sku_master:
+	st.markdown('Upload SKU Master Success')
 st.markdown("""---""")
 
-st.write("6.Pilih apakah akan takeout EPC sameday")
+st.write("6.Download History [link](https://pisang.sayurbox.tech/question/2290-inventory-history-realtime-inventory-management-system?warehouse=Sentul&inventory_system_category=Fruits&inventory_system_category=Vegetables), input created_at")
+history = st.file_uploader('Upload History', type='xlsx')
+if history:
+	st.markdown('Upload History Success')
+st.markdown("""---""")
+
+st.write("7.Pilih apakah akan takeout EPC sameday")
 sameday_takeout = st.selectbox('Takeout EPC Sameday',('NO', 'YES'))
 st.markdown("""---""")
 
-st.write("7.Jika cek diatas jam 12 malam, set buffer menjai OFF")
+st.write("8.Jika cek diatas jam 12 malam, set buffer menjai OFF")
 buffer = st.selectbox('Buffer',('ON', 'OFF'))
 st.markdown("""---""")
 
@@ -96,10 +102,10 @@ if process:
 	data.loc[(data['Parent_SKU_Desc'].isna()) , 'Parent_SKU_Desc'] = data['sku_description']
 
 	data['varian_name'] = data['Parent_SKU_Desc'].str.replace(r'\s*\w+(?:\W+\w+)?\s*(?![^,])', '')
-	data = data.replace({'varian_name': 'Impor Impor'}, 
-                       {'varian_name': 'Impor'}, regex=True)
-	data = data.replace({'varian_name': 'Import'}, 
-                       {'varian_name': 'Impor'}, regex=True)
+	data = data.replace({'varian_name': 'Impor Impor'},
+			    {'varian_name': 'Impor'}, regex=True)
+	data = data.replace({'varian_name': 'Import'},
+			    {'varian_name': 'Impor'}, regex=True)
 	data = data.replace({'varian_name': 'Organik Organik'}, 
 	                        {'varian_name': 'Organik'}, regex=True)
 	data = data.replace({'varian_name': 'Imperfect Imperfect'}, 
