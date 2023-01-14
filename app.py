@@ -186,7 +186,7 @@ if process:
 	history['varian_name'] = history['sku_description'].str.replace(r'\s*\w+(?:\W+\w+)?\s*(?![^,])', '')
 	history = history.replace({'varian_name': 'Impor Impor'}, 
                         {'varian_name': 'Impor'}, regex=True)
-    	history = history.replace({'varian_name': 'Import'}, 
+	history = history.replace({'varian_name': 'Import'}, 
                         {'varian_name': 'Impor'}, regex=True)
 	history = history.replace({'varian_name': 'Organik Organik'}, 
 				{'varian_name': 'Organik'}, regex=True)
