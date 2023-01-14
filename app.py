@@ -52,8 +52,8 @@ if sku_master:
 st.markdown("""---""")
 
 st.write("6.Download History [link](https://pisang.sayurbox.tech/question/2290-inventory-history-realtime-inventory-management-system?warehouse=Sentul&inventory_system_category=Fruits&inventory_system_category=Vegetables), input created_at")
-history = st.file_uploader('Upload History', type='xlsx')
-if history:
+history_data = st.file_uploader('Upload History', type='xlsx')
+if history_data:
 	st.markdown('Upload History Success')
 st.markdown("""---""")
 
@@ -168,7 +168,7 @@ if process:
 	join.loc[(join['minus_fg'] <= 10), 'minus_fg_plus_buffer'] = (join['minus_fg']*buffer1).apply(np.ceil)
 	join.loc[(join['minus_fg'] > 10), 'minus_fg_plus_buffer'] = (join['minus_fg']*buffer2).apply(np.ceil)
 	
-	history = pd.read_excel('History.xlsx')
+	history = pd.read_excel(history_data)
 	history = history.loc[(history['activity_type'] == "stock_movement")]
 	history = history.loc[(history['area_source'] == "Storage Chiller Fresh") | (history['area_source'] == "Storage Ambient WH07")
 			      |(history['area_source'] == "Production")|(history['area_source'] == "Finished Goods Storage")]
