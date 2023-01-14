@@ -223,6 +223,7 @@ if process:
         	right_on='varian_name',
         	how='left')
 	join = join.fillna(0)
+	join = join.sort_values(by=['varian_name'])
 
 	st.markdown('Process Completed')
 	st.dataframe(join)
