@@ -231,9 +231,12 @@ if process:
 	join['minus_fg_plus_buffer'] = join['minus_fg_plus_buffer']*join['converter']
 		    
 	
-	to_phl = join[['varian_name','minus_fg_plus_buffer']]
-	to_phl.columns = ['item_name','total_ambil_di_raw_mat']
-	to_phl = pd.DataFrame(to_phl.groupby(['item_name'], as_index = False).sum())
+	to_phl = join[['varian_name','inventory_system_category','minus_fg_plus_buffer']]
+	to_phl.columns = ['item_name','inventory_system_category','total_ambil_di_raw_mat']
+	to_phl = pd.DataFrame(to_phl.groupby(['item_name','inventory_system_category'], as_index = False).sum())
+	
+	to_production = join[['sku_number','sku_description','inventory_system_category','minus_fg_plus_buffer','unit']]
+	to_production.columns = [['sku_number','sku_description','inventory_system_category','need_production','unit']]
 
 	st.markdown('Process Completed')
 	st.dataframe(join)
