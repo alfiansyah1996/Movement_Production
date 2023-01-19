@@ -78,7 +78,7 @@ if process:
 	data_raw = data_raw.loc[(data_raw['inventory_system_category'] == "Fruits") | (data_raw['inventory_system_category'] == "Vegetables")]
 	data = data_raw[['sku_number','sku_description','inventory_system_category','Finished_Goods_Storage','Storage_Ambient_WH07','Storage_Chiller_Fresh']]
 	base = pd.read_excel(sku_master)
-	base = base[['sku_code','uom_unit','uom_qty]]
+	base = base[['sku_code','uom_unit','uom_qty']]
 	base['converter']=sku['uom_qty']
     	base.loc[(base['uom_unit'] =='gram'), 'converter'] = base['uom_qty']/1000
 	base.columns = ['sku_number','unit','converter']
