@@ -232,7 +232,7 @@ if process:
 	
 	to_phl = join[['varian_name','minus_fg_plus_buffer']]
 	to_phl.columns = ['item_name','total_ambil_di_raw_mat']
-	to_phl = pd.DataFrame(to_phl.groupby(['item_name], as_index = False).sum()))
+	to_phl = pd.DataFrame(to_phl.groupby(['item_name'], as_index = False).sum())
 
 	st.markdown('Process Completed')
 	st.dataframe(join)
