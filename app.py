@@ -80,7 +80,7 @@ if process:
 	base = pd.read_excel(sku_master)
 	base = base[['sku_code','uom_unit','uom_qty']]
 	base['converter']=sku['uom_qty']
-    	base.loc[(base['uom_unit'] =='gram'), 'converter'] = base['uom_qty']/1000
+	base.loc[(base['uom_unit'] =='gram'), 'converter'] = base['uom_qty']/1000
 	base.columns = ['sku_number','unit','converter']
 	data = pd.merge(
 	        left=data,
