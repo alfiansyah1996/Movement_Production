@@ -78,8 +78,10 @@ if process:
 	data_raw = data_raw.loc[(data_raw['inventory_system_category'] == "Fruits") | (data_raw['inventory_system_category'] == "Vegetables")]
 	data = data_raw[['sku_number','sku_description','inventory_system_category','Finished_Goods_Storage','Storage_Ambient_WH07','Storage_Chiller_Fresh']]
 	base = pd.read_excel(sku_master)
-	base = base[['sku_code','uom_unit']]
-	base.columns = ['sku_number','unit']
+	base = base[['sku_code','uom_unit','uom_qty]]
+	base['converter']=sku['uom_qty']
+    	base.loc[(base['uom_unit'] =='gram'), 'converter'] = base['uom_qty']/1000
+	base.columns = ['sku_number','unit','converter']
 	data = pd.merge(
 	        left=data,
 	        right=base,
@@ -127,7 +129,7 @@ if process:
 
 	data.loc[(data['unit'] == 'gram'), 'unit'] = 'kg'
 	data['varian_name']=data['varian_name']+' '+data['unit']
-	fg = data[['sku_number','sku_description','varian_name','inventory_system_category','unit','Finished_Goods_Storage']]
+	fg = data[['sku_number','sku_description','varian_name','inventory_system_category','unit','converter','Finished_Goods_Storage']]
 	raw_mat = data[['varian_name','Storage_Ambient_WH07','Storage_Chiller_Fresh']]
 	raw_mat['raw_mat']=raw_mat['Storage_Ambient_WH07']+raw_mat['Storage_Chiller_Fresh']
 	raw_mat = raw_mat[['varian_name','raw_mat']]
@@ -224,9 +226,19 @@ if process:
         	how='left')
 	join = join.fillna(0)
 	join = join.sort_values(by=['varian_name'])
+	join['minus_fg_plus_buffer'] = (join['minus_fg_plus_buffer']/join['converter']).apply(np.floor)
+	join['minus_fg_plus_buffer'] = join['minus_fg_plus_buffer']*join['converter']
+		    
+	
+	to_phl = join[['varian_name','minus_fg_plus_buffer']]
+	to_phl.columns = ['item_name','total_ambil_di_raw_mat']
+	to_phl = pd.DataFrame(to_phl.groupby(['item_name], as_index = False).sum())
 
 	st.markdown('Process Completed')
 	st.dataframe(join)
 
-	st.subheader('Downloads:')
-	generate_excel_download_link(join)
+	st.subheader('Downloads dan Print Untuk PHL:')
+	generate_excel_download_link(to_phl)
+					      
+	st.subheader('Downloads dan Print Untuk Produksi:')
+	generate_excel_download_link(join)				    
